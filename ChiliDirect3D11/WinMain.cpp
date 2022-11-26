@@ -6,10 +6,18 @@ LRESULT CALLBACK WndProc(
     WPARAM wParam,
     LPARAM lParam ) {
     switch ( msg ) {
+    case WM_KEYDOWN:
+        if ( wParam == 'R' ) {
+            SetWindowText( hWnd, "This window has been renamed" );
+        }
+        break;
+    case WM_KEYUP:
+        if ( wParam == 'R' ) {
+            SetWindowText( hWnd, "Rename the window AGAIN" );
+        }
+        break;
     case WM_CLOSE:
         PostQuitMessage( 123 );
-        break;
-    default:
         break;
     }
     return DefWindowProc( hWnd, msg, wParam, lParam );
@@ -55,7 +63,7 @@ int CALLBACK WinMain(
 
     MSG msg;
     BOOL gResult;
-    while ( (gResult = GetMessage( &msg, nullptr, 0, 0 )) > 0 ) {
+    while ( ( gResult = GetMessage( &msg, nullptr, 0, 0 ) ) > 0 ) {
         TranslateMessage( &msg );
         DispatchMessage( &msg );
     }
