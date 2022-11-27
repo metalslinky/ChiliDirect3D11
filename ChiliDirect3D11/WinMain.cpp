@@ -1,44 +1,4 @@
-#include <Windows.h>
-#include <string>
-#include <sstream>
-
-LRESULT CALLBACK WndProc(
-    HWND hWnd,
-    UINT msg,
-    WPARAM wParam,
-    LPARAM lParam ) {
-    switch ( msg ) {
-    case WM_KEYDOWN:
-        if ( wParam == 'R' ) {
-            SetWindowText( hWnd, "This window has been renamed" );
-        }
-        break;
-    case WM_KEYUP:
-        if ( wParam == 'R' ) {
-            SetWindowText( hWnd, "Rename the window AGAIN" );
-        }
-        break;
-    case WM_CHAR:
-    {
-        static std::string title;
-        title.push_back( static_cast< char >( wParam ) );
-        SetWindowText( hWnd, title.c_str() );
-    }
-    break;
-    case WM_LBUTTONDOWN:
-    {
-        POINTS point = MAKEPOINTS( lParam );
-        std::ostringstream oss;
-        oss << "(" << point.x << ", " << point.y << ")";
-        SetWindowText( hWnd, oss.str().c_str() );
-    }
-        break;
-    case WM_CLOSE:
-        PostQuitMessage( 123 );
-        break;
-    }
-    return DefWindowProc( hWnd, msg, wParam, lParam );
-}
+#include "Window.h"
 
 int CALLBACK WinMain(
     HINSTANCE hInstance,
@@ -46,40 +6,10 @@ int CALLBACK WinMain(
     LPSTR lpCmdLine,
     int nCmdShow ) {
 
-    const auto CLASS_NAME = "Direct3D11 practice project";
-    WNDCLASSEX wc = { 0 };
-    wc.cbSize = sizeof( wc );
-    wc.style = CS_OWNDC;
-    wc.lpfnWndProc = WndProc;
-    wc.cbClsExtra = 0;
-    wc.cbWndExtra = 0;
-    wc.hInstance = hInstance;
-    wc.hIcon = nullptr;
-    wc.hCursor = nullptr;
-    wc.hbrBackground = nullptr;
-    wc.lpszMenuName = nullptr;
-    wc.lpszClassName = CLASS_NAME;
-    wc.hIconSm = nullptr;
-    RegisterClassEx( &wc );
-
-    HWND hWnd = CreateWindowEx(
-        0,
-        CLASS_NAME,
-        "This is a lovely window",
-        WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, // https://learn.microsoft.com/en-us/windows/win32/winmsg/window-styles
-        200,
-        200,
-        640,
-        480,
-        nullptr,
-        nullptr,
-        hInstance,
-        nullptr );
-
-    ShowWindow( hWnd, SW_SHOW );
-
+    Window wnd( 640, 480, "Direct3D11 practice project" );
     MSG msg;
     BOOL gResult;
+
     while ( ( gResult = GetMessage( &msg, nullptr, 0, 0 ) ) > 0 ) {
         TranslateMessage( &msg );
         DispatchMessage( &msg );
@@ -87,7 +17,6 @@ int CALLBACK WinMain(
 
     if ( gResult == -1 ) {
         return -1;
-    } else {
-        return msg.wParam;
     }
+    return msg.wParam;
 }
