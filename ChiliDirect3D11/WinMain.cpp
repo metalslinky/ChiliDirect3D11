@@ -1,4 +1,6 @@
 #include <Windows.h>
+#include <string>
+#include <sstream>
 
 LRESULT CALLBACK WndProc(
     HWND hWnd,
@@ -15,6 +17,21 @@ LRESULT CALLBACK WndProc(
         if ( wParam == 'R' ) {
             SetWindowText( hWnd, "Rename the window AGAIN" );
         }
+        break;
+    case WM_CHAR:
+    {
+        static std::string title;
+        title.push_back( static_cast< char >( wParam ) );
+        SetWindowText( hWnd, title.c_str() );
+    }
+    break;
+    case WM_LBUTTONDOWN:
+    {
+        POINTS point = MAKEPOINTS( lParam );
+        std::ostringstream oss;
+        oss << "(" << point.x << ", " << point.y << ")";
+        SetWindowText( hWnd, oss.str().c_str() );
+    }
         break;
     case WM_CLOSE:
         PostQuitMessage( 123 );
